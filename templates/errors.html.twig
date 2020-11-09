@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col p-3 mt-5">
+                <h1>{{ title }}</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col p-3">
+                <ul>
+                {% for violation in violations %}
+                    <li>{{ violation.message }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
