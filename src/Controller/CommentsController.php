@@ -56,13 +56,15 @@ class CommentsController extends AbstractController
             }
 
             if ($client->call('get', ['page_uid' => $pageUid])) {
-
-                dump($client->result);
+                $comments = $client->result;
+            } else {
+                $comments = [];
             }
 
             return $this->render('comments.html.twig', [
                 'title' => 'Leave a comment',
                 'form' => $form->createView(),
+                'comments' => $comments,
             ]);
         } else {
             return $this->render('errors.html.twig', [
