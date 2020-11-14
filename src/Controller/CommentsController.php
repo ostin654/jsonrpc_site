@@ -8,7 +8,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Uuid;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -23,7 +24,7 @@ class CommentsController extends AbstractController
         Request $request,
         Client $client,
         ValidatorInterface $validator,
-        NormalizerInterface $normalizer,
+        SerializerInterface $serializer,
         string $pageUid = ''
     ): Response {
         $notBlank = new NotBlank();
@@ -44,7 +45,11 @@ class CommentsController extends AbstractController
                 $comment = $form->getData();
                 $comment->setPageUid($pageUid);
 
-                if ($client->call('add', $normalizer->normalize($comment))) {
+                $normalizedComment = $serializer->normalize($comment, null, [
+                    AbstractNormalizer::IGNORED_ATTRIBUTES => ['createdAt']
+                ]);
+
+                if ($client->call('add', $normalizedComment)) {
                     $this->addFlash('success', 'Comment was added');
                 } else {
                     $this->addFlash('warning', 'There was error adding a comment');
@@ -56,7 +61,7 @@ class CommentsController extends AbstractController
             }
 
             if ($client->call('get', ['page_uid' => $pageUid])) {
-                $comments = $client->result;
+                $comments = $serializer->denormalize($client->result, Comment::class . '[]');
             } else {
                 $comments = [];
             }

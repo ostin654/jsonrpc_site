@@ -3,21 +3,30 @@
 namespace App\Dto;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
-class Comment implements \JsonSerializable
+class Comment
 {
     /**
      * @Assert\NotBlank()
+     * @SerializedName("name")
      */
     private string $name;
 
     /**
      * @Assert\NotBlank()
+     * @SerializedName("notes")
      */
     private string $notes;
 
+    /**
+     * @SerializedName("created_at")
+     */
     private ?\DateTimeInterface $createdAt;
 
+    /**
+     * @SerializedName("page_uid")
+     */
     private string $pageUid;
 
     public function getName(): string
@@ -58,14 +67,5 @@ class Comment implements \JsonSerializable
     public function setPageUid(string $pageUid): void
     {
         $this->pageUid = $pageUid;
-    }
-
-    public function jsonSerialize()
-    {
-        return [
-            'name' => $this->name,
-            'notes' => $this->notes,
-            'page_uid' => $this->pageUid,
-        ];
     }
 }

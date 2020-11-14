@@ -20,6 +20,17 @@
             {{ form_end(form) }}
         </div>
     </div>
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="row">
+                <div class="flash-{{ label }}">
+                    {{ message }}
+                </div>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
     <div class="row">
         <div class="col p-3">
             {% if comments|length > 0 %}
@@ -34,7 +45,7 @@
                     <tbody>
                     {% for comment in comments %}
                     <tr>
-                        <td>{{ comment.created_at }}</td>
+                        <td>{{ comment.createdAt|date }}</td>
                         <td>{{ comment.name }}</td>
                         <td>{{ comment.notes }}</td>
                     </tr>
